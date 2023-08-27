@@ -1,0 +1,12 @@
+pkgname="model"
+output="infrastructure/repository/mysql/model"
+no-tests=true
+wipe=true
+
+[mysql]
+dbname = "db"
+host   = "localhost"
+port   = 3306
+user   = "app"
+pass   = "password"
+sslmode = "false"

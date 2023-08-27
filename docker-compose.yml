@@ -1,0 +1,18 @@
+version: "3"
+
+services:
+  mysql:
+    platform: linux/x86_64
+    image: mysql:8.0
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: password
+      MYSQL_DATABASE: db
+      MYSQL_USER: app
+      MYSQL_PASSWORD: password
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --default-authentication-plugin=mysql_native_password
+    volumes:
+      - ./docker/mysql/initdb.d:/docker-entrypoint-initdb.d
+      - ./docker/mysql/data:/var/lib/mysql
+    ports:
+      - 3306:3306
+    container_name: mysql
