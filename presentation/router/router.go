@@ -33,10 +33,16 @@ func New(db *db.Conn) (*Router, error) {
 func (router *Router) Routes() {
 	router.Route("/api", func(r chi.Router) {
 		r.Use(middleware.Recover)
-		r.Route("/invoices", func(r chi.Router) {
-			r.Get("/", router.handler.Invoice.Get)
-			r.Post("/", router.handler.Invoice.Create)
+		r.Use(middleware.AccessLog)
+		// 認証
+		r.Group(func(r chi.Router) {
+			r.Use(router.middleware.AuthMiddleware.Auth)
+			r.Route("/invoices", func(r chi.Router) {
+				r.Get("/", router.handler.Invoice.Get)
+				r.Post("/", router.handler.Invoice.Create)
+			})
 		})
+
 	})
 }
 

@@ -32,12 +32,12 @@ type User struct { // ユーザID
 	Name string `boil:"name" json:"name" toml:"name" yaml:"name"`
 	// メールアドレス
 	Mail string `boil:"mail" json:"mail" toml:"mail" yaml:"mail"`
-	// パスワード#
+	// パスワード
 	PasswordHash string `boil:"password_hash" json:"password_hash" toml:"password_hash" yaml:"password_hash"`
 	// パスワード用のソルト
-	Salt      string    `boil:"salt" json:"salt" toml:"salt" yaml:"salt"`
-	CreatedAt time.Time `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
-	UpdatedAt time.Time `boil:"updated_at" json:"updated_at" toml:"updated_at" yaml:"updated_at"`
+	PasswordSalt string    `boil:"password_salt" json:"password_salt" toml:"password_salt" yaml:"password_salt"`
+	CreatedAt    time.Time `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
+	UpdatedAt    time.Time `boil:"updated_at" json:"updated_at" toml:"updated_at" yaml:"updated_at"`
 
 	R *userR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L userL  `boil:"-" json:"-" toml:"-" yaml:"-"`
@@ -50,7 +50,7 @@ var UserColumns = struct {
 	Name         string
 	Mail         string
 	PasswordHash string
-	Salt         string
+	PasswordSalt string
 	CreatedAt    string
 	UpdatedAt    string
 }{
@@ -60,7 +60,7 @@ var UserColumns = struct {
 	Name:         "name",
 	Mail:         "mail",
 	PasswordHash: "password_hash",
-	Salt:         "salt",
+	PasswordSalt: "password_salt",
 	CreatedAt:    "created_at",
 	UpdatedAt:    "updated_at",
 }
@@ -72,7 +72,7 @@ var UserTableColumns = struct {
 	Name         string
 	Mail         string
 	PasswordHash string
-	Salt         string
+	PasswordSalt string
 	CreatedAt    string
 	UpdatedAt    string
 }{
@@ -82,7 +82,7 @@ var UserTableColumns = struct {
 	Name:         "user.name",
 	Mail:         "user.mail",
 	PasswordHash: "user.password_hash",
-	Salt:         "user.salt",
+	PasswordSalt: "user.password_salt",
 	CreatedAt:    "user.created_at",
 	UpdatedAt:    "user.updated_at",
 }
@@ -96,7 +96,7 @@ var UserWhere = struct {
 	Name         whereHelperstring
 	Mail         whereHelperstring
 	PasswordHash whereHelperstring
-	Salt         whereHelperstring
+	PasswordSalt whereHelperstring
 	CreatedAt    whereHelpertime_Time
 	UpdatedAt    whereHelpertime_Time
 }{
@@ -106,7 +106,7 @@ var UserWhere = struct {
 	Name:         whereHelperstring{field: "`user`.`name`"},
 	Mail:         whereHelperstring{field: "`user`.`mail`"},
 	PasswordHash: whereHelperstring{field: "`user`.`password_hash`"},
-	Salt:         whereHelperstring{field: "`user`.`salt`"},
+	PasswordSalt: whereHelperstring{field: "`user`.`password_salt`"},
 	CreatedAt:    whereHelpertime_Time{field: "`user`.`created_at`"},
 	UpdatedAt:    whereHelpertime_Time{field: "`user`.`updated_at`"},
 }
@@ -128,8 +128,8 @@ func (*userR) NewStruct() *userR {
 type userL struct{}
 
 var (
-	userAllColumns            = []string{"id", "company_id", "rand_id", "name", "mail", "password_hash", "salt", "created_at", "updated_at"}
-	userColumnsWithoutDefault = []string{"company_id", "rand_id", "name", "mail", "password_hash", "salt", "created_at", "updated_at"}
+	userAllColumns            = []string{"id", "company_id", "rand_id", "name", "mail", "password_hash", "password_salt", "created_at", "updated_at"}
+	userColumnsWithoutDefault = []string{"company_id", "rand_id", "name", "mail", "password_hash", "password_salt", "created_at", "updated_at"}
 	userColumnsWithDefault    = []string{"id"}
 	userPrimaryKeyColumns     = []string{"id"}
 	userGeneratedColumns      = []string{}

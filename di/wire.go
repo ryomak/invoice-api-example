@@ -7,6 +7,7 @@ import (
 	"github.com/google/wire"
 	"github.com/ryomak/invoice-api-example/application/usecase"
 	"github.com/ryomak/invoice-api-example/infrastructure/client/db"
+	"github.com/ryomak/invoice-api-example/infrastructure/repository"
 	"github.com/ryomak/invoice-api-example/presentation/handler"
 	"github.com/ryomak/invoice-api-example/presentation/middleware"
 )
@@ -29,6 +30,7 @@ func Middlewares(
 	wire.Build(
 		middleware.New,
 		middleware.NewAuthMiddleware,
+		repository.NewUser,
 	)
 	return nil, nil
 }

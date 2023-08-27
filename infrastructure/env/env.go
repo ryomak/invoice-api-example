@@ -46,3 +46,7 @@ func (e Environment) IsValid() error {
 		return fmt.Errorf("invalid environment: %s", e)
 	}
 }
+
+func (c *Config) IsLocal() bool {
+	return c.Env == Local
+}

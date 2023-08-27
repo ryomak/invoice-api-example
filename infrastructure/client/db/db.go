@@ -15,14 +15,15 @@ type Conn struct {
 func New() (*Conn, error) {
 	envCfg := env.GetCfg()
 	c := mysql.Config{
-		DBName:    envCfg.MySQLDatabase,
-		User:      envCfg.MySQLUser,
-		Passwd:    envCfg.MySQLPassword,
-		Addr:      fmt.Sprintf("%s:%s", envCfg.MySQLHost, envCfg.MySQLPort),
-		Net:       "tcp",
-		ParseTime: true,
-		Collation: "utf8mb4_unicode_ci",
-		Loc:       time.UTC,
+		DBName:               envCfg.MySQLDatabase,
+		User:                 envCfg.MySQLUser,
+		Passwd:               envCfg.MySQLPassword,
+		Addr:                 fmt.Sprintf("%s:%s", envCfg.MySQLHost, envCfg.MySQLPort),
+		Net:                  "tcp",
+		ParseTime:            true,
+		Collation:            "utf8mb4_unicode_ci",
+		Loc:                  time.UTC,
+		AllowNativePasswords: true,
 	}
 	db, err := sql.Open("mysql", c.FormatDSN())
 	if err != nil {

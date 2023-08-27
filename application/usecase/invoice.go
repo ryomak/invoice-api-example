@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/ryomak/invoice-api-example/application/request"
 	"github.com/ryomak/invoice-api-example/application/response"
+	myContext "github.com/ryomak/invoice-api-example/domain/context"
 )
 
 type Invoice interface {
@@ -19,6 +20,7 @@ func NewInvoice() Invoice {
 }
 
 func (i *invoice) Get(ctx context.Context, req *request.InvoiceGet) (*response.InvoiceGet, error) {
+	auth := myContext.GetAuth(ctx)
 	return nil, nil
 }
 

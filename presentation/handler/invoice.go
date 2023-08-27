@@ -1,9 +1,9 @@
 package handler
 
 import (
-	"context"
 	"github.com/ryomak/invoice-api-example/application/request"
 	"github.com/ryomak/invoice-api-example/application/usecase"
+	"github.com/ryomak/invoice-api-example/pkg/logger"
 	"github.com/ryomak/invoice-api-example/presentation/resource"
 	"net/http"
 )
@@ -30,12 +30,14 @@ func (h *invoiceHandler) Get(w http.ResponseWriter, r *http.Request) {
 		req,
 		request.WithQuery,
 	); err != nil {
+		logger.Warningf(r.Context(), "InvoiceHandler.Get.Request: %v", err)
 		resource.ErrorJson(w, err)
 		return
 	}
 
-	res, err := h.invoiceUsecase.Get(context.Background(), req)
+	res, err := h.invoiceUsecase.Get(r.Context(), req)
 	if err != nil {
+		logger.Errorf(r.Context(), "InvoiceHandler.Get: %v", err)
 		resource.ErrorJson(w, err)
 		return
 	}
@@ -50,12 +52,14 @@ func (h *invoiceHandler) Create(w http.ResponseWriter, r *http.Request) {
 		req,
 		request.WithBody,
 	); err != nil {
+		logger.Warningf(r.Context(), "InvoiceHandler.Create.Request: %v", err)
 		resource.ErrorJson(w, err)
 		return
 	}
 
-	res, err := h.invoiceUsecase.Create(context.Background(), req)
+	res, err := h.invoiceUsecase.Create(r.Context(), req)
 	if err != nil {
+		logger.Errorf(r.Context(), "InvoiceHandler.Create: %v", err)
 		resource.ErrorJson(w, err)
 		return
 	}

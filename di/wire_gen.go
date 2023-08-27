@@ -9,6 +9,7 @@ package di
 import (
 	"github.com/ryomak/invoice-api-example/application/usecase"
 	"github.com/ryomak/invoice-api-example/infrastructure/client/db"
+	"github.com/ryomak/invoice-api-example/infrastructure/repository"
 	"github.com/ryomak/invoice-api-example/presentation/handler"
 	"github.com/ryomak/invoice-api-example/presentation/middleware"
 )
@@ -23,7 +24,8 @@ func Handlers(conn *db.Conn) (*handler.Handler, error) {
 }
 
 func Middlewares(conn *db.Conn) (*middleware.Middleware, error) {
-	authMiddleware := middleware.NewAuthMiddleware()
+	user := repository.NewUser(conn)
+	authMiddleware := middleware.NewAuthMiddleware(user)
 	middlewareMiddleware := middleware.New(authMiddleware)
 	return middlewareMiddleware, nil
 }
