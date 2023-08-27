@@ -31,6 +31,7 @@ func NewInvoice(
 	}
 }
 
+// Get 指定期間内の請求書を取得する
 func (i *invoice) Get(ctx context.Context, req *request.InvoiceGet) (*response.InvoiceGet, error) {
 	auth := myContext.GetAuth(ctx)
 	company, err := i.companyRepository.GetByUserID(ctx, auth.User.ID)
@@ -45,6 +46,7 @@ func (i *invoice) Get(ctx context.Context, req *request.InvoiceGet) (*response.I
 	return response.NewInvoiceGet(invoices), nil
 }
 
+// Create 請求書を作成する
 func (i *invoice) Create(ctx context.Context, req *request.InvoiceCreate) (*response.InvoiceCreate, error) {
 	auth := myContext.GetAuth(ctx)
 	company, err := i.companyRepository.GetByUserID(ctx, auth.User.ID)
