@@ -5,6 +5,8 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/ryomak/invoice-api-example/di"
 	"github.com/ryomak/invoice-api-example/infrastructure/client/db"
+	"github.com/ryomak/invoice-api-example/infrastructure/env"
+	"github.com/ryomak/invoice-api-example/pkg/logger"
 	"github.com/ryomak/invoice-api-example/presentation/handler"
 	"github.com/ryomak/invoice-api-example/presentation/middleware"
 	"log"
@@ -18,6 +20,13 @@ type Router struct {
 }
 
 func New(db *db.Conn) (*Router, error) {
+	if err := env.Build(); err != nil {
+		return nil, err
+	}
+	if err := logger.Build(); err != nil {
+		return nil, err
+	}
+
 	r := chi.NewRouter()
 	m, err := di.Middlewares(db)
 	if err != nil {

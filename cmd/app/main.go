@@ -3,18 +3,10 @@ package main
 import (
 	"github.com/ryomak/invoice-api-example/infrastructure/client/db"
 	"github.com/ryomak/invoice-api-example/infrastructure/env"
-	"github.com/ryomak/invoice-api-example/pkg/logger"
 	"github.com/ryomak/invoice-api-example/presentation/router"
 )
 
 func main() {
-	if err := env.Build(); err != nil {
-		panic(err)
-	}
-	if err := logger.Build(); err != nil {
-		panic(err)
-	}
-
 	conn, err := db.New()
 	if err != nil {
 		panic(err)

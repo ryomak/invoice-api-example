@@ -11,3 +11,9 @@ func SetFakeGenerateID(id string) {
 		return id
 	}
 }
+
+func ResetGenerateID() {
+	GenerateID = func() string {
+		return xid.New().String()
+	}
+}

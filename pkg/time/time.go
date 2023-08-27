@@ -11,3 +11,9 @@ func SetFakeNow(t time.Time) {
 		return t
 	}
 }
+
+func ResetNow() {
+	Now = func() time.Time {
+		return time.Now()
+	}
+}
