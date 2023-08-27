@@ -9,6 +9,7 @@ func CompanyClientToEntity(m *model.CompanyClient) *entity.CompanyClient {
 	return &entity.CompanyClient{
 		ID:                 m.ID,
 		RandID:             m.RandID,
+		CompanyID:          m.CompanyID,
 		Name:               m.Name,
 		RepresentativeName: m.RepresentativeName,
 		PhoneNumber:        m.PhoneNumber,

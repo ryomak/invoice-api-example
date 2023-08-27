@@ -7,6 +7,7 @@ import (
 	"github.com/ryomak/invoice-api-example/infrastructure/client/db"
 	"github.com/ryomak/invoice-api-example/infrastructure/repository/mysql/converter"
 	"github.com/ryomak/invoice-api-example/infrastructure/repository/mysql/model"
+	"github.com/volatiletech/sqlboiler/v4/queries/qm"
 )
 
 type company struct {
@@ -31,4 +32,24 @@ func (c *company) GetByUserID(ctx context.Context, userID uint64) (*entity.Compa
 	}
 
 	return converter.CompanyToEntity(mo), nil
+}
+
+func (c *company) GetClientByRandID(ctx context.Context, randID string) (*entity.CompanyClient, error) {
+	mo, err := model.CompanyClients(
+		model.CompanyClientWhere.RandID.EQ(randID),
+		qm.Load(model.CompanyClientRels.BankAccount),
+		qm.Load(qm.Rels(
+			model.CompanyClientRels.BankAccount,
+			model.BankAccountRels.Bank,
+		)),
+		qm.Load(qm.Rels(
+			model.CompanyClientRels.BankAccount,
+			model.BankAccountRels.Branch,
+		)),
+	).One(ctx, c.conn)
+	if err != nil {
+		return nil, err
+	}
+
+	return converter.CompanyClientToEntity(mo), nil
 }

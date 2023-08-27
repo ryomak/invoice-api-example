@@ -3,7 +3,6 @@ package converter
 import (
 	"github.com/ryomak/invoice-api-example/domain/entity"
 	"github.com/ryomak/invoice-api-example/infrastructure/repository/mysql/model"
-	"time"
 )
 
 func UserToEntity(m *model.User) *entity.User {
@@ -27,7 +26,7 @@ func UserToModel(e *entity.User) *model.User {
 		CompanyID:    e.CompanyID,
 		PasswordHash: e.PasswordHash,
 		PasswordSalt: e.PasswordSalt,
-		CreatedAt:    time.Now(),
-		UpdatedAt:    time.Now(),
+		CreatedAt:    mtime.Now(),
+		UpdatedAt:    mtime.Now(),
 	}
 }

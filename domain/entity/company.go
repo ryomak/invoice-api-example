@@ -13,6 +13,7 @@ type Company struct {
 type CompanyClient struct {
 	ID                 uint64
 	RandID             string
+	CompanyID          uint64       // 会社ID
 	Name               string       // 氏名
 	RepresentativeName string       // 代表者名
 	PhoneNumber        string       // 電話番号

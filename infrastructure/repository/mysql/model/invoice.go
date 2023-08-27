@@ -34,14 +34,16 @@ type Invoice struct { // 銀行口座ID
 	Status string `boil:"status" json:"status" toml:"status" yaml:"status"`
 	// 発行日
 	IssueAt time.Time `boil:"issue_at" json:"issue_at" toml:"issue_at" yaml:"issue_at"`
-	// 金額
-	Amount uint64 `boil:"amount" json:"amount" toml:"amount" yaml:"amount"`
+	// 支払金額
+	PaymentAmount uint64 `boil:"payment_amount" json:"payment_amount" toml:"payment_amount" yaml:"payment_amount"`
+	// 請求金額
+	BillingAmount uint64 `boil:"billing_amount" json:"billing_amount" toml:"billing_amount" yaml:"billing_amount"`
 	// 手数料
-	Fee uint `boil:"fee" json:"fee" toml:"fee" yaml:"fee"`
+	Fee uint64 `boil:"fee" json:"fee" toml:"fee" yaml:"fee"`
 	// 手数料率
 	FeeRatio uint `boil:"fee_ratio" json:"fee_ratio" toml:"fee_ratio" yaml:"fee_ratio"`
 	// 消費税
-	Tax uint `boil:"tax" json:"tax" toml:"tax" yaml:"tax"`
+	Tax uint64 `boil:"tax" json:"tax" toml:"tax" yaml:"tax"`
 	// 消費税率
 	TaxRatio uint `boil:"tax_ratio" json:"tax_ratio" toml:"tax_ratio" yaml:"tax_ratio"`
 	// 支払い期日
@@ -60,7 +62,8 @@ var InvoiceColumns = struct {
 	CompanyClientID string
 	Status          string
 	IssueAt         string
-	Amount          string
+	PaymentAmount   string
+	BillingAmount   string
 	Fee             string
 	FeeRatio        string
 	Tax             string
@@ -75,7 +78,8 @@ var InvoiceColumns = struct {
 	CompanyClientID: "company_client_id",
 	Status:          "status",
 	IssueAt:         "issue_at",
-	Amount:          "amount",
+	PaymentAmount:   "payment_amount",
+	BillingAmount:   "billing_amount",
 	Fee:             "fee",
 	FeeRatio:        "fee_ratio",
 	Tax:             "tax",
@@ -92,7 +96,8 @@ var InvoiceTableColumns = struct {
 	CompanyClientID string
 	Status          string
 	IssueAt         string
-	Amount          string
+	PaymentAmount   string
+	BillingAmount   string
 	Fee             string
 	FeeRatio        string
 	Tax             string
@@ -107,7 +112,8 @@ var InvoiceTableColumns = struct {
 	CompanyClientID: "invoice.company_client_id",
 	Status:          "invoice.status",
 	IssueAt:         "invoice.issue_at",
-	Amount:          "invoice.amount",
+	PaymentAmount:   "invoice.payment_amount",
+	BillingAmount:   "invoice.billing_amount",
 	Fee:             "invoice.fee",
 	FeeRatio:        "invoice.fee_ratio",
 	Tax:             "invoice.tax",
@@ -149,10 +155,11 @@ var InvoiceWhere = struct {
 	CompanyClientID whereHelperuint64
 	Status          whereHelperstring
 	IssueAt         whereHelpertime_Time
-	Amount          whereHelperuint64
-	Fee             whereHelperuint
+	PaymentAmount   whereHelperuint64
+	BillingAmount   whereHelperuint64
+	Fee             whereHelperuint64
 	FeeRatio        whereHelperuint
-	Tax             whereHelperuint
+	Tax             whereHelperuint64
 	TaxRatio        whereHelperuint
 	DueAt           whereHelpertime_Time
 	CreatedAt       whereHelpertime_Time
@@ -164,10 +171,11 @@ var InvoiceWhere = struct {
 	CompanyClientID: whereHelperuint64{field: "`invoice`.`company_client_id`"},
 	Status:          whereHelperstring{field: "`invoice`.`status`"},
 	IssueAt:         whereHelpertime_Time{field: "`invoice`.`issue_at`"},
-	Amount:          whereHelperuint64{field: "`invoice`.`amount`"},
-	Fee:             whereHelperuint{field: "`invoice`.`fee`"},
+	PaymentAmount:   whereHelperuint64{field: "`invoice`.`payment_amount`"},
+	BillingAmount:   whereHelperuint64{field: "`invoice`.`billing_amount`"},
+	Fee:             whereHelperuint64{field: "`invoice`.`fee`"},
 	FeeRatio:        whereHelperuint{field: "`invoice`.`fee_ratio`"},
-	Tax:             whereHelperuint{field: "`invoice`.`tax`"},
+	Tax:             whereHelperuint64{field: "`invoice`.`tax`"},
 	TaxRatio:        whereHelperuint{field: "`invoice`.`tax_ratio`"},
 	DueAt:           whereHelpertime_Time{field: "`invoice`.`due_at`"},
 	CreatedAt:       whereHelpertime_Time{field: "`invoice`.`created_at`"},
@@ -212,8 +220,8 @@ func (r *invoiceR) GetCompany() *Company {
 type invoiceL struct{}
 
 var (
-	invoiceAllColumns            = []string{"id", "rand_id", "company_id", "company_client_id", "status", "issue_at", "amount", "fee", "fee_ratio", "tax", "tax_ratio", "due_at", "created_at", "updated_at"}
-	invoiceColumnsWithoutDefault = []string{"rand_id", "company_id", "company_client_id", "status", "issue_at", "amount", "fee", "fee_ratio", "tax", "tax_ratio", "due_at", "created_at", "updated_at"}
+	invoiceAllColumns            = []string{"id", "rand_id", "company_id", "company_client_id", "status", "issue_at", "payment_amount", "billing_amount", "fee", "fee_ratio", "tax", "tax_ratio", "due_at", "created_at", "updated_at"}
+	invoiceColumnsWithoutDefault = []string{"rand_id", "company_id", "company_client_id", "status", "issue_at", "payment_amount", "billing_amount", "fee", "fee_ratio", "tax", "tax_ratio", "due_at", "created_at", "updated_at"}
 	invoiceColumnsWithDefault    = []string{"id"}
 	invoicePrimaryKeyColumns     = []string{"id"}
 	invoiceGeneratedColumns      = []string{}
