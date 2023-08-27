@@ -113,29 +113,19 @@ var BankWhere = struct {
 
 // BankRels is where relationship names are stored.
 var BankRels = struct {
-	BankAccounts string
 	BankBranches string
 }{
-	BankAccounts: "BankAccounts",
 	BankBranches: "BankBranches",
 }
 
 // bankR is where relationships are stored.
 type bankR struct {
-	BankAccounts BankAccountSlice `boil:"BankAccounts" json:"BankAccounts" toml:"BankAccounts" yaml:"BankAccounts"`
-	BankBranches BankBranchSlice  `boil:"BankBranches" json:"BankBranches" toml:"BankBranches" yaml:"BankBranches"`
+	BankBranches BankBranchSlice `boil:"BankBranches" json:"BankBranches" toml:"BankBranches" yaml:"BankBranches"`
 }
 
 // NewStruct creates a new relationship struct
 func (*bankR) NewStruct() *bankR {
 	return &bankR{}
-}
-
-func (r *bankR) GetBankAccounts() BankAccountSlice {
-	if r == nil {
-		return nil
-	}
-	return r.BankAccounts
 }
 
 func (r *bankR) GetBankBranches() BankBranchSlice {
@@ -434,20 +424,6 @@ func (q bankQuery) Exists(ctx context.Context, exec boil.ContextExecutor) (bool,
 	return count > 0, nil
 }
 
-// BankAccounts retrieves all the bank_account's BankAccounts with an executor.
-func (o *Bank) BankAccounts(mods ...qm.QueryMod) bankAccountQuery {
-	var queryMods []qm.QueryMod
-	if len(mods) != 0 {
-		queryMods = append(queryMods, mods...)
-	}
-
-	queryMods = append(queryMods,
-		qm.Where("`bank_account`.`bank_id`=?", o.ID),
-	)
-
-	return BankAccounts(queryMods...)
-}
-
 // BankBranches retrieves all the bank_branch's BankBranches with an executor.
 func (o *Bank) BankBranches(mods ...qm.QueryMod) bankBranchQuery {
 	var queryMods []qm.QueryMod
@@ -460,120 +436,6 @@ func (o *Bank) BankBranches(mods ...qm.QueryMod) bankBranchQuery {
 	)
 
 	return BankBranches(queryMods...)
-}
-
-// LoadBankAccounts allows an eager lookup of values, cached into the
-// loaded structs of the objects. This is for a 1-M or N-M relationship.
-func (bankL) LoadBankAccounts(ctx context.Context, e boil.ContextExecutor, singular bool, maybeBank interface{}, mods queries.Applicator) error {
-	var slice []*Bank
-	var object *Bank
-
-	if singular {
-		var ok bool
-		object, ok = maybeBank.(*Bank)
-		if !ok {
-			object = new(Bank)
-			ok = queries.SetFromEmbeddedStruct(&object, &maybeBank)
-			if !ok {
-				return errors.New(fmt.Sprintf("failed to set %T from embedded struct %T", object, maybeBank))
-			}
-		}
-	} else {
-		s, ok := maybeBank.(*[]*Bank)
-		if ok {
-			slice = *s
-		} else {
-			ok = queries.SetFromEmbeddedStruct(&slice, maybeBank)
-			if !ok {
-				return errors.New(fmt.Sprintf("failed to set %T from embedded struct %T", slice, maybeBank))
-			}
-		}
-	}
-
-	args := make([]interface{}, 0, 1)
-	if singular {
-		if object.R == nil {
-			object.R = &bankR{}
-		}
-		args = append(args, object.ID)
-	} else {
-	Outer:
-		for _, obj := range slice {
-			if obj.R == nil {
-				obj.R = &bankR{}
-			}
-
-			for _, a := range args {
-				if a == obj.ID {
-					continue Outer
-				}
-			}
-
-			args = append(args, obj.ID)
-		}
-	}
-
-	if len(args) == 0 {
-		return nil
-	}
-
-	query := NewQuery(
-		qm.From(`bank_account`),
-		qm.WhereIn(`bank_account.bank_id in ?`, args...),
-	)
-	if mods != nil {
-		mods.Apply(query)
-	}
-
-	results, err := query.QueryContext(ctx, e)
-	if err != nil {
-		return errors.Wrap(err, "failed to eager load bank_account")
-	}
-
-	var resultSlice []*BankAccount
-	if err = queries.Bind(results, &resultSlice); err != nil {
-		return errors.Wrap(err, "failed to bind eager loaded slice bank_account")
-	}
-
-	if err = results.Close(); err != nil {
-		return errors.Wrap(err, "failed to close results in eager load on bank_account")
-	}
-	if err = results.Err(); err != nil {
-		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for bank_account")
-	}
-
-	if len(bankAccountAfterSelectHooks) != 0 {
-		for _, obj := range resultSlice {
-			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
-				return err
-			}
-		}
-	}
-	if singular {
-		object.R.BankAccounts = resultSlice
-		for _, foreign := range resultSlice {
-			if foreign.R == nil {
-				foreign.R = &bankAccountR{}
-			}
-			foreign.R.Bank = object
-		}
-		return nil
-	}
-
-	for _, foreign := range resultSlice {
-		for _, local := range slice {
-			if local.ID == foreign.BankID {
-				local.R.BankAccounts = append(local.R.BankAccounts, foreign)
-				if foreign.R == nil {
-					foreign.R = &bankAccountR{}
-				}
-				foreign.R.Bank = local
-				break
-			}
-		}
-	}
-
-	return nil
 }
 
 // LoadBankBranches allows an eager lookup of values, cached into the
@@ -687,59 +549,6 @@ func (bankL) LoadBankBranches(ctx context.Context, e boil.ContextExecutor, singu
 		}
 	}
 
-	return nil
-}
-
-// AddBankAccounts adds the given related objects to the existing relationships
-// of the bank, optionally inserting them as new records.
-// Appends related to o.R.BankAccounts.
-// Sets related.R.Bank appropriately.
-func (o *Bank) AddBankAccounts(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*BankAccount) error {
-	var err error
-	for _, rel := range related {
-		if insert {
-			rel.BankID = o.ID
-			if err = rel.Insert(ctx, exec, boil.Infer()); err != nil {
-				return errors.Wrap(err, "failed to insert into foreign table")
-			}
-		} else {
-			updateQuery := fmt.Sprintf(
-				"UPDATE `bank_account` SET %s WHERE %s",
-				strmangle.SetParamNames("`", "`", 0, []string{"bank_id"}),
-				strmangle.WhereClause("`", "`", 0, bankAccountPrimaryKeyColumns),
-			)
-			values := []interface{}{o.ID, rel.ID}
-
-			if boil.IsDebug(ctx) {
-				writer := boil.DebugWriterFrom(ctx)
-				fmt.Fprintln(writer, updateQuery)
-				fmt.Fprintln(writer, values)
-			}
-			if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
-				return errors.Wrap(err, "failed to update foreign table")
-			}
-
-			rel.BankID = o.ID
-		}
-	}
-
-	if o.R == nil {
-		o.R = &bankR{
-			BankAccounts: related,
-		}
-	} else {
-		o.R.BankAccounts = append(o.R.BankAccounts, related...)
-	}
-
-	for _, rel := range related {
-		if rel.R == nil {
-			rel.R = &bankAccountR{
-				Bank: o,
-			}
-		} else {
-			rel.R.Bank = o
-		}
-	}
 	return nil
 }
 

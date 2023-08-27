@@ -106,7 +106,7 @@ func (b *invoiceBuilder) Build() (*Invoice, error) {
 		return nil, errors.New("paymentAmount is required")
 
 	}
-	if b.dueAt.IsZero() || b.dueAt.After(mtime.Now()) {
+	if b.dueAt.IsZero() || b.dueAt.Before(mtime.Now()) {
 		return nil, errors.New("dueAt is required")
 	}
 

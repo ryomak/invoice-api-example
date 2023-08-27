@@ -37,7 +37,7 @@ func (i *invoice) Get(ctx context.Context, req *request.InvoiceGet) (*response.I
 	if err != nil {
 		return nil, fmt.Errorf("companyRepository.GetByUserID: %w", err)
 	}
-	invoices, err := i.invoiceRepository.FindByCompanyIDAndFromTo(ctx, company.ID, req.From, req.To, req.Limit)
+	invoices, err := i.invoiceRepository.FindByCompanyIDAndFromTo(ctx, company.ID, req.From, req.To, req.Offset, req.Limit)
 	if err != nil {
 		return nil, fmt.Errorf("invoiceRepository.FindByCompanyIDAndFromTo: %w", err)
 	}

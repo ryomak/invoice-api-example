@@ -6,9 +6,10 @@ import (
 )
 
 type InvoiceGet struct {
-	From  time.Time `json:"-" schema:"from"`
-	To    time.Time `json:"-" schema:"to"`
-	Limit int       `json:"-" schema:"limit"`
+	From   time.Time `json:"-" schema:"from"`
+	To     time.Time `json:"-" schema:"to"`
+	Limit  int       `json:"-" schema:"limit"`
+	Offset int       `json:"-" schema:"offset"`
 }
 
 type InvoiceCreate struct {

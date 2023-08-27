@@ -48,3 +48,11 @@ func InvoiceToModel(e *entity.Invoice) *model.Invoice {
 		UpdatedAt:       e.UpdatedAt,
 	}
 }
+
+func InvoicesToEntities(m []*model.Invoice) []*entity.Invoice {
+	s := make([]*entity.Invoice, 0, len(m))
+	for _, v := range m {
+		s = append(s, InvoiceToEntity(v))
+	}
+	return s
+}

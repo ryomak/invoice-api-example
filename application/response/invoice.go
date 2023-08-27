@@ -26,28 +26,30 @@ func NewInvoiceCreate(e *entity.Invoice) *InvoiceCreate {
 }
 
 type Invoice struct {
-	RandID   string               `json:"randId"`
-	Status   entity.InvoiceStatus `json:"status"`
-	IssueAt  time.Time            `json:"issueAt"`
-	Amount   uint64               `json:"amount"`
-	Fee      uint                 `json:"fee"`
-	FeeRatio float64              `json:"feeRatio"`
-	Tax      uint64               `json:"tax"`
-	TaxRatio float64              `json:"taxRatio"`
-	DueAt    time.Time            `json:"dueAt"`
+	RandID        string               `json:"randId"`
+	Status        entity.InvoiceStatus `json:"status"`
+	IssueAt       time.Time            `json:"issueAt"`
+	PaymentAmount uint64               `json:"paymentAmount"`
+	BillingAmount uint64               `json:"billingAmount"`
+	Fee           uint64               `json:"fee"`
+	FeeRatio      float64              `json:"feeRatio"`
+	Tax           uint64               `json:"tax"`
+	TaxRatio      float64              `json:"taxRatio"`
+	DueAt         time.Time            `json:"dueAt"`
 }
 
 func NewInvoice(e *entity.Invoice) *Invoice {
 	return &Invoice{
-		RandID:   e.RandID,
-		Status:   e.Status,
-		IssueAt:  e.IssueAt,
-		Amount:   e.Amount,
-		Fee:      e.Fee,
-		FeeRatio: e.FeeRatio,
-		Tax:      e.Tax,
-		TaxRatio: e.TaxRatio,
-		DueAt:    e.DueAt,
+		RandID:        e.RandID,
+		Status:        e.Status,
+		IssueAt:       e.IssueAt,
+		PaymentAmount: e.PaymentAmount,
+		BillingAmount: e.BillingAmount,
+		Fee:           e.Fee,
+		FeeRatio:      e.FeeRatio,
+		Tax:           e.Tax,
+		TaxRatio:      e.TaxRatio,
+		DueAt:         e.DueAt,
 	}
 }
 

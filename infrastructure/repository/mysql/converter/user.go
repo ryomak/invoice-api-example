@@ -3,6 +3,7 @@ package converter
 import (
 	"github.com/ryomak/invoice-api-example/domain/entity"
 	"github.com/ryomak/invoice-api-example/infrastructure/repository/mysql/model"
+	mtime "github.com/ryomak/invoice-api-example/pkg/time"
 )
 
 func UserToEntity(m *model.User) *entity.User {

@@ -21,11 +21,3 @@ type CompanyClient struct {
 	Address            string       // 住所
 	BankAccount        *BankAccount // 銀行口座
 }
-
-type BankAccount struct {
-	ID         uint64
-	Bank       *Bank       // 銀行
-	BankBranch *BankBranch // 支店
-	Number     string      // 口座番号
-	HolderName string      // 口座名義
-}

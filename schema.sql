@@ -33,17 +33,12 @@ CREATE TABLE `bank_branch` (
 
 CREATE TABLE `bank_account` (
    `id` bigint unsigned NOT NULL COMMENT 'id',
-   `bank_id` bigint unsigned NOT NULL COMMENT '銀行ID',
    `branch_id` bigint unsigned NOT NULL COMMENT '支店ID',
    `holder_name` varchar(255) NOT NULL COMMENT '口座名',
    `number` varchar(255) NOT NULL COMMENT '口座番号',
    `created_at` datetime NOT NULL,
    `updated_at` datetime NOT NULL,
    PRIMARY KEY (`id`),
-   CONSTRAINT `fk_bank_account_bank_id`
-      FOREIGN KEY (`bank_id`)
-          REFERENCES `bank` (`id`)
-          ON DELETE RESTRICT ON UPDATE RESTRICT,
    CONSTRAINT `fk_bank_account_branch_id`
       FOREIGN KEY (`branch_id`)
           REFERENCES `bank_branch` (`id`)

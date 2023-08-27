@@ -40,11 +40,12 @@ func (c *company) GetClientByRandID(ctx context.Context, randID string) (*entity
 		qm.Load(model.CompanyClientRels.BankAccount),
 		qm.Load(qm.Rels(
 			model.CompanyClientRels.BankAccount,
-			model.BankAccountRels.Bank,
+			model.BankAccountRels.Branch,
 		)),
 		qm.Load(qm.Rels(
 			model.CompanyClientRels.BankAccount,
 			model.BankAccountRels.Branch,
+			model.BankBranchRels.Bank,
 		)),
 	).One(ctx, c.conn)
 	if err != nil {

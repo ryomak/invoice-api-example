@@ -7,6 +7,6 @@ import (
 )
 
 type Invoice interface {
-	FindByCompanyIDAndFromTo(ctx context.Context, companyID uint64, from, to time.Time, limit int) ([]*entity.Invoice, error)
+	FindByCompanyIDAndFromTo(ctx context.Context, companyID uint64, from, to time.Time, offset, limit int) ([]*entity.Invoice, error)
 	Create(ctx context.Context, invoice *entity.Invoice) error
 }
