@@ -24,16 +24,16 @@ import (
 // BankAccount is an object representing the database table.
 type BankAccount struct { // id
 	ID uint64 `boil:"id" json:"id" toml:"id" yaml:"id"`
-	// 会社ID
-	CompanyID uint64 `boil:"company_id" json:"company_id" toml:"company_id" yaml:"company_id"`
 	// 銀行ID
 	BankID uint64 `boil:"bank_id" json:"bank_id" toml:"bank_id" yaml:"bank_id"`
 	// 支店ID
 	BranchID uint64 `boil:"branch_id" json:"branch_id" toml:"branch_id" yaml:"branch_id"`
-	// 名義
-	HolderName string    `boil:"holder_name" json:"holder_name" toml:"holder_name" yaml:"holder_name"`
-	CreatedAt  time.Time `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
-	UpdatedAt  time.Time `boil:"updated_at" json:"updated_at" toml:"updated_at" yaml:"updated_at"`
+	// 口座名
+	HolderName string `boil:"holder_name" json:"holder_name" toml:"holder_name" yaml:"holder_name"`
+	// 口座番号
+	Number    string    `boil:"number" json:"number" toml:"number" yaml:"number"`
+	CreatedAt time.Time `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
+	UpdatedAt time.Time `boil:"updated_at" json:"updated_at" toml:"updated_at" yaml:"updated_at"`
 
 	R *bankAccountR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L bankAccountL  `boil:"-" json:"-" toml:"-" yaml:"-"`
@@ -41,36 +41,36 @@ type BankAccount struct { // id
 
 var BankAccountColumns = struct {
 	ID         string
-	CompanyID  string
 	BankID     string
 	BranchID   string
 	HolderName string
+	Number     string
 	CreatedAt  string
 	UpdatedAt  string
 }{
 	ID:         "id",
-	CompanyID:  "company_id",
 	BankID:     "bank_id",
 	BranchID:   "branch_id",
 	HolderName: "holder_name",
+	Number:     "number",
 	CreatedAt:  "created_at",
 	UpdatedAt:  "updated_at",
 }
 
 var BankAccountTableColumns = struct {
 	ID         string
-	CompanyID  string
 	BankID     string
 	BranchID   string
 	HolderName string
+	Number     string
 	CreatedAt  string
 	UpdatedAt  string
 }{
 	ID:         "bank_account.id",
-	CompanyID:  "bank_account.company_id",
 	BankID:     "bank_account.bank_id",
 	BranchID:   "bank_account.branch_id",
 	HolderName: "bank_account.holder_name",
+	Number:     "bank_account.number",
 	CreatedAt:  "bank_account.created_at",
 	UpdatedAt:  "bank_account.updated_at",
 }
@@ -100,38 +100,38 @@ func (w whereHelpertime_Time) GTE(x time.Time) qm.QueryMod {
 
 var BankAccountWhere = struct {
 	ID         whereHelperuint64
-	CompanyID  whereHelperuint64
 	BankID     whereHelperuint64
 	BranchID   whereHelperuint64
 	HolderName whereHelperstring
+	Number     whereHelperstring
 	CreatedAt  whereHelpertime_Time
 	UpdatedAt  whereHelpertime_Time
 }{
 	ID:         whereHelperuint64{field: "`bank_account`.`id`"},
-	CompanyID:  whereHelperuint64{field: "`bank_account`.`company_id`"},
 	BankID:     whereHelperuint64{field: "`bank_account`.`bank_id`"},
 	BranchID:   whereHelperuint64{field: "`bank_account`.`branch_id`"},
 	HolderName: whereHelperstring{field: "`bank_account`.`holder_name`"},
+	Number:     whereHelperstring{field: "`bank_account`.`number`"},
 	CreatedAt:  whereHelpertime_Time{field: "`bank_account`.`created_at`"},
 	UpdatedAt:  whereHelpertime_Time{field: "`bank_account`.`updated_at`"},
 }
 
 // BankAccountRels is where relationship names are stored.
 var BankAccountRels = struct {
-	Bank    string
-	Branch  string
-	Company string
+	Bank           string
+	Branch         string
+	CompanyClients string
 }{
-	Bank:    "Bank",
-	Branch:  "Branch",
-	Company: "Company",
+	Bank:           "Bank",
+	Branch:         "Branch",
+	CompanyClients: "CompanyClients",
 }
 
 // bankAccountR is where relationships are stored.
 type bankAccountR struct {
-	Bank    *Bank       `boil:"Bank" json:"Bank" toml:"Bank" yaml:"Bank"`
-	Branch  *BankBranch `boil:"Branch" json:"Branch" toml:"Branch" yaml:"Branch"`
-	Company *Company    `boil:"Company" json:"Company" toml:"Company" yaml:"Company"`
+	Bank           *Bank              `boil:"Bank" json:"Bank" toml:"Bank" yaml:"Bank"`
+	Branch         *BankBranch        `boil:"Branch" json:"Branch" toml:"Branch" yaml:"Branch"`
+	CompanyClients CompanyClientSlice `boil:"CompanyClients" json:"CompanyClients" toml:"CompanyClients" yaml:"CompanyClients"`
 }
 
 // NewStruct creates a new relationship struct
@@ -153,19 +153,19 @@ func (r *bankAccountR) GetBranch() *BankBranch {
 	return r.Branch
 }
 
-func (r *bankAccountR) GetCompany() *Company {
+func (r *bankAccountR) GetCompanyClients() CompanyClientSlice {
 	if r == nil {
 		return nil
 	}
-	return r.Company
+	return r.CompanyClients
 }
 
 // bankAccountL is where Load methods for each relationship are stored.
 type bankAccountL struct{}
 
 var (
-	bankAccountAllColumns            = []string{"id", "company_id", "bank_id", "branch_id", "holder_name", "created_at", "updated_at"}
-	bankAccountColumnsWithoutDefault = []string{"id", "company_id", "bank_id", "branch_id", "holder_name", "created_at", "updated_at"}
+	bankAccountAllColumns            = []string{"id", "bank_id", "branch_id", "holder_name", "number", "created_at", "updated_at"}
+	bankAccountColumnsWithoutDefault = []string{"id", "bank_id", "branch_id", "holder_name", "number", "created_at", "updated_at"}
 	bankAccountColumnsWithDefault    = []string{}
 	bankAccountPrimaryKeyColumns     = []string{"id"}
 	bankAccountGeneratedColumns      = []string{}
@@ -471,15 +471,18 @@ func (o *BankAccount) Branch(mods ...qm.QueryMod) bankBranchQuery {
 	return BankBranches(queryMods...)
 }
 
-// Company pointed to by the foreign key.
-func (o *BankAccount) Company(mods ...qm.QueryMod) companyQuery {
-	queryMods := []qm.QueryMod{
-		qm.Where("`id` = ?", o.CompanyID),
+// CompanyClients retrieves all the company_client's CompanyClients with an executor.
+func (o *BankAccount) CompanyClients(mods ...qm.QueryMod) companyClientQuery {
+	var queryMods []qm.QueryMod
+	if len(mods) != 0 {
+		queryMods = append(queryMods, mods...)
 	}
 
-	queryMods = append(queryMods, mods...)
+	queryMods = append(queryMods,
+		qm.Where("`company_client`.`bank_account_id`=?", o.ID),
+	)
 
-	return Companies(queryMods...)
+	return CompanyClients(queryMods...)
 }
 
 // LoadBank allows an eager lookup of values, cached into the
@@ -722,9 +725,9 @@ func (bankAccountL) LoadBranch(ctx context.Context, e boil.ContextExecutor, sing
 	return nil
 }
 
-// LoadCompany allows an eager lookup of values, cached into the
-// loaded structs of the objects. This is for an N-1 relationship.
-func (bankAccountL) LoadCompany(ctx context.Context, e boil.ContextExecutor, singular bool, maybeBankAccount interface{}, mods queries.Applicator) error {
+// LoadCompanyClients allows an eager lookup of values, cached into the
+// loaded structs of the objects. This is for a 1-M or N-M relationship.
+func (bankAccountL) LoadCompanyClients(ctx context.Context, e boil.ContextExecutor, singular bool, maybeBankAccount interface{}, mods queries.Applicator) error {
 	var slice []*BankAccount
 	var object *BankAccount
 
@@ -755,8 +758,7 @@ func (bankAccountL) LoadCompany(ctx context.Context, e boil.ContextExecutor, sin
 		if object.R == nil {
 			object.R = &bankAccountR{}
 		}
-		args = append(args, object.CompanyID)
-
+		args = append(args, object.ID)
 	} else {
 	Outer:
 		for _, obj := range slice {
@@ -765,13 +767,12 @@ func (bankAccountL) LoadCompany(ctx context.Context, e boil.ContextExecutor, sin
 			}
 
 			for _, a := range args {
-				if a == obj.CompanyID {
+				if a == obj.ID {
 					continue Outer
 				}
 			}
 
-			args = append(args, obj.CompanyID)
-
+			args = append(args, obj.ID)
 		}
 	}
 
@@ -780,8 +781,8 @@ func (bankAccountL) LoadCompany(ctx context.Context, e boil.ContextExecutor, sin
 	}
 
 	query := NewQuery(
-		qm.From(`company`),
-		qm.WhereIn(`company.id in ?`, args...),
+		qm.From(`company_client`),
+		qm.WhereIn(`company_client.bank_account_id in ?`, args...),
 	)
 	if mods != nil {
 		mods.Apply(query)
@@ -789,51 +790,47 @@ func (bankAccountL) LoadCompany(ctx context.Context, e boil.ContextExecutor, sin
 
 	results, err := query.QueryContext(ctx, e)
 	if err != nil {
-		return errors.Wrap(err, "failed to eager load Company")
+		return errors.Wrap(err, "failed to eager load company_client")
 	}
 
-	var resultSlice []*Company
+	var resultSlice []*CompanyClient
 	if err = queries.Bind(results, &resultSlice); err != nil {
-		return errors.Wrap(err, "failed to bind eager loaded slice Company")
+		return errors.Wrap(err, "failed to bind eager loaded slice company_client")
 	}
 
 	if err = results.Close(); err != nil {
-		return errors.Wrap(err, "failed to close results of eager load for company")
+		return errors.Wrap(err, "failed to close results in eager load on company_client")
 	}
 	if err = results.Err(); err != nil {
-		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for company")
+		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for company_client")
 	}
 
-	if len(companyAfterSelectHooks) != 0 {
+	if len(companyClientAfterSelectHooks) != 0 {
 		for _, obj := range resultSlice {
 			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
 				return err
 			}
 		}
 	}
-
-	if len(resultSlice) == 0 {
-		return nil
-	}
-
 	if singular {
-		foreign := resultSlice[0]
-		object.R.Company = foreign
-		if foreign.R == nil {
-			foreign.R = &companyR{}
+		object.R.CompanyClients = resultSlice
+		for _, foreign := range resultSlice {
+			if foreign.R == nil {
+				foreign.R = &companyClientR{}
+			}
+			foreign.R.BankAccount = object
 		}
-		foreign.R.BankAccounts = append(foreign.R.BankAccounts, object)
 		return nil
 	}
 
-	for _, local := range slice {
-		for _, foreign := range resultSlice {
-			if local.CompanyID == foreign.ID {
-				local.R.Company = foreign
+	for _, foreign := range resultSlice {
+		for _, local := range slice {
+			if local.ID == foreign.BankAccountID {
+				local.R.CompanyClients = append(local.R.CompanyClients, foreign)
 				if foreign.R == nil {
-					foreign.R = &companyR{}
+					foreign.R = &companyClientR{}
 				}
-				foreign.R.BankAccounts = append(foreign.R.BankAccounts, local)
+				foreign.R.BankAccount = local
 				break
 			}
 		}
@@ -936,50 +933,56 @@ func (o *BankAccount) SetBranch(ctx context.Context, exec boil.ContextExecutor, 
 	return nil
 }
 
-// SetCompany of the bankAccount to the related item.
-// Sets o.R.Company to related.
-// Adds o to related.R.BankAccounts.
-func (o *BankAccount) SetCompany(ctx context.Context, exec boil.ContextExecutor, insert bool, related *Company) error {
+// AddCompanyClients adds the given related objects to the existing relationships
+// of the bank_account, optionally inserting them as new records.
+// Appends related to o.R.CompanyClients.
+// Sets related.R.BankAccount appropriately.
+func (o *BankAccount) AddCompanyClients(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*CompanyClient) error {
 	var err error
-	if insert {
-		if err = related.Insert(ctx, exec, boil.Infer()); err != nil {
-			return errors.Wrap(err, "failed to insert into foreign table")
+	for _, rel := range related {
+		if insert {
+			rel.BankAccountID = o.ID
+			if err = rel.Insert(ctx, exec, boil.Infer()); err != nil {
+				return errors.Wrap(err, "failed to insert into foreign table")
+			}
+		} else {
+			updateQuery := fmt.Sprintf(
+				"UPDATE `company_client` SET %s WHERE %s",
+				strmangle.SetParamNames("`", "`", 0, []string{"bank_account_id"}),
+				strmangle.WhereClause("`", "`", 0, companyClientPrimaryKeyColumns),
+			)
+			values := []interface{}{o.ID, rel.ID}
+
+			if boil.IsDebug(ctx) {
+				writer := boil.DebugWriterFrom(ctx)
+				fmt.Fprintln(writer, updateQuery)
+				fmt.Fprintln(writer, values)
+			}
+			if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
+				return errors.Wrap(err, "failed to update foreign table")
+			}
+
+			rel.BankAccountID = o.ID
 		}
 	}
 
-	updateQuery := fmt.Sprintf(
-		"UPDATE `bank_account` SET %s WHERE %s",
-		strmangle.SetParamNames("`", "`", 0, []string{"company_id"}),
-		strmangle.WhereClause("`", "`", 0, bankAccountPrimaryKeyColumns),
-	)
-	values := []interface{}{related.ID, o.ID}
-
-	if boil.IsDebug(ctx) {
-		writer := boil.DebugWriterFrom(ctx)
-		fmt.Fprintln(writer, updateQuery)
-		fmt.Fprintln(writer, values)
-	}
-	if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
-		return errors.Wrap(err, "failed to update local table")
-	}
-
-	o.CompanyID = related.ID
 	if o.R == nil {
 		o.R = &bankAccountR{
-			Company: related,
+			CompanyClients: related,
 		}
 	} else {
-		o.R.Company = related
+		o.R.CompanyClients = append(o.R.CompanyClients, related...)
 	}
 
-	if related.R == nil {
-		related.R = &companyR{
-			BankAccounts: BankAccountSlice{o},
+	for _, rel := range related {
+		if rel.R == nil {
+			rel.R = &companyClientR{
+				BankAccount: o,
+			}
+		} else {
+			rel.R.BankAccount = o
 		}
-	} else {
-		related.R.BankAccounts = append(related.R.BankAccounts, o)
 	}
-
 	return nil
 }
 

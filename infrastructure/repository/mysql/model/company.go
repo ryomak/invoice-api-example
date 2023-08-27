@@ -28,6 +28,8 @@ type Company struct { // 会社ID
 	RandID string `boil:"rand_id" json:"rand_id" toml:"rand_id" yaml:"rand_id"`
 	// 会社名
 	Name string `boil:"name" json:"name" toml:"name" yaml:"name"`
+	// 代表者名
+	RepresentativeName string `boil:"representative_name" json:"representative_name" toml:"representative_name" yaml:"representative_name"`
 	// 電話番号
 	PhoneNumber string `boil:"phone_number" json:"phone_number" toml:"phone_number" yaml:"phone_number"`
 	// 郵便番号
@@ -42,102 +44,91 @@ type Company struct { // 会社ID
 }
 
 var CompanyColumns = struct {
-	ID          string
-	RandID      string
-	Name        string
-	PhoneNumber string
-	PostalCode  string
-	Address     string
-	CreatedAt   string
-	UpdatedAt   string
+	ID                 string
+	RandID             string
+	Name               string
+	RepresentativeName string
+	PhoneNumber        string
+	PostalCode         string
+	Address            string
+	CreatedAt          string
+	UpdatedAt          string
 }{
-	ID:          "id",
-	RandID:      "rand_id",
-	Name:        "name",
-	PhoneNumber: "phone_number",
-	PostalCode:  "postal_code",
-	Address:     "address",
-	CreatedAt:   "created_at",
-	UpdatedAt:   "updated_at",
+	ID:                 "id",
+	RandID:             "rand_id",
+	Name:               "name",
+	RepresentativeName: "representative_name",
+	PhoneNumber:        "phone_number",
+	PostalCode:         "postal_code",
+	Address:            "address",
+	CreatedAt:          "created_at",
+	UpdatedAt:          "updated_at",
 }
 
 var CompanyTableColumns = struct {
-	ID          string
-	RandID      string
-	Name        string
-	PhoneNumber string
-	PostalCode  string
-	Address     string
-	CreatedAt   string
-	UpdatedAt   string
+	ID                 string
+	RandID             string
+	Name               string
+	RepresentativeName string
+	PhoneNumber        string
+	PostalCode         string
+	Address            string
+	CreatedAt          string
+	UpdatedAt          string
 }{
-	ID:          "company.id",
-	RandID:      "company.rand_id",
-	Name:        "company.name",
-	PhoneNumber: "company.phone_number",
-	PostalCode:  "company.postal_code",
-	Address:     "company.address",
-	CreatedAt:   "company.created_at",
-	UpdatedAt:   "company.updated_at",
+	ID:                 "company.id",
+	RandID:             "company.rand_id",
+	Name:               "company.name",
+	RepresentativeName: "company.representative_name",
+	PhoneNumber:        "company.phone_number",
+	PostalCode:         "company.postal_code",
+	Address:            "company.address",
+	CreatedAt:          "company.created_at",
+	UpdatedAt:          "company.updated_at",
 }
 
 // Generated where
 
 var CompanyWhere = struct {
-	ID          whereHelperuint64
-	RandID      whereHelperstring
-	Name        whereHelperstring
-	PhoneNumber whereHelperstring
-	PostalCode  whereHelperstring
-	Address     whereHelperstring
-	CreatedAt   whereHelpertime_Time
-	UpdatedAt   whereHelpertime_Time
+	ID                 whereHelperuint64
+	RandID             whereHelperstring
+	Name               whereHelperstring
+	RepresentativeName whereHelperstring
+	PhoneNumber        whereHelperstring
+	PostalCode         whereHelperstring
+	Address            whereHelperstring
+	CreatedAt          whereHelpertime_Time
+	UpdatedAt          whereHelpertime_Time
 }{
-	ID:          whereHelperuint64{field: "`company`.`id`"},
-	RandID:      whereHelperstring{field: "`company`.`rand_id`"},
-	Name:        whereHelperstring{field: "`company`.`name`"},
-	PhoneNumber: whereHelperstring{field: "`company`.`phone_number`"},
-	PostalCode:  whereHelperstring{field: "`company`.`postal_code`"},
-	Address:     whereHelperstring{field: "`company`.`address`"},
-	CreatedAt:   whereHelpertime_Time{field: "`company`.`created_at`"},
-	UpdatedAt:   whereHelpertime_Time{field: "`company`.`updated_at`"},
+	ID:                 whereHelperuint64{field: "`company`.`id`"},
+	RandID:             whereHelperstring{field: "`company`.`rand_id`"},
+	Name:               whereHelperstring{field: "`company`.`name`"},
+	RepresentativeName: whereHelperstring{field: "`company`.`representative_name`"},
+	PhoneNumber:        whereHelperstring{field: "`company`.`phone_number`"},
+	PostalCode:         whereHelperstring{field: "`company`.`postal_code`"},
+	Address:            whereHelperstring{field: "`company`.`address`"},
+	CreatedAt:          whereHelpertime_Time{field: "`company`.`created_at`"},
+	UpdatedAt:          whereHelpertime_Time{field: "`company`.`updated_at`"},
 }
 
 // CompanyRels is where relationship names are stored.
 var CompanyRels = struct {
-	BankAccounts                string
-	ClientCompanyCompanyClients string
-	CompanyClients              string
+	CompanyClients string
+	Invoices       string
 }{
-	BankAccounts:                "BankAccounts",
-	ClientCompanyCompanyClients: "ClientCompanyCompanyClients",
-	CompanyClients:              "CompanyClients",
+	CompanyClients: "CompanyClients",
+	Invoices:       "Invoices",
 }
 
 // companyR is where relationships are stored.
 type companyR struct {
-	BankAccounts                BankAccountSlice   `boil:"BankAccounts" json:"BankAccounts" toml:"BankAccounts" yaml:"BankAccounts"`
-	ClientCompanyCompanyClients CompanyClientSlice `boil:"ClientCompanyCompanyClients" json:"ClientCompanyCompanyClients" toml:"ClientCompanyCompanyClients" yaml:"ClientCompanyCompanyClients"`
-	CompanyClients              CompanyClientSlice `boil:"CompanyClients" json:"CompanyClients" toml:"CompanyClients" yaml:"CompanyClients"`
+	CompanyClients CompanyClientSlice `boil:"CompanyClients" json:"CompanyClients" toml:"CompanyClients" yaml:"CompanyClients"`
+	Invoices       InvoiceSlice       `boil:"Invoices" json:"Invoices" toml:"Invoices" yaml:"Invoices"`
 }
 
 // NewStruct creates a new relationship struct
 func (*companyR) NewStruct() *companyR {
 	return &companyR{}
-}
-
-func (r *companyR) GetBankAccounts() BankAccountSlice {
-	if r == nil {
-		return nil
-	}
-	return r.BankAccounts
-}
-
-func (r *companyR) GetClientCompanyCompanyClients() CompanyClientSlice {
-	if r == nil {
-		return nil
-	}
-	return r.ClientCompanyCompanyClients
 }
 
 func (r *companyR) GetCompanyClients() CompanyClientSlice {
@@ -147,12 +138,19 @@ func (r *companyR) GetCompanyClients() CompanyClientSlice {
 	return r.CompanyClients
 }
 
+func (r *companyR) GetInvoices() InvoiceSlice {
+	if r == nil {
+		return nil
+	}
+	return r.Invoices
+}
+
 // companyL is where Load methods for each relationship are stored.
 type companyL struct{}
 
 var (
-	companyAllColumns            = []string{"id", "rand_id", "name", "phone_number", "postal_code", "address", "created_at", "updated_at"}
-	companyColumnsWithoutDefault = []string{"rand_id", "name", "phone_number", "postal_code", "address", "created_at", "updated_at"}
+	companyAllColumns            = []string{"id", "rand_id", "name", "representative_name", "phone_number", "postal_code", "address", "created_at", "updated_at"}
+	companyColumnsWithoutDefault = []string{"rand_id", "name", "representative_name", "phone_number", "postal_code", "address", "created_at", "updated_at"}
 	companyColumnsWithDefault    = []string{"id"}
 	companyPrimaryKeyColumns     = []string{"id"}
 	companyGeneratedColumns      = []string{}
@@ -436,34 +434,6 @@ func (q companyQuery) Exists(ctx context.Context, exec boil.ContextExecutor) (bo
 	return count > 0, nil
 }
 
-// BankAccounts retrieves all the bank_account's BankAccounts with an executor.
-func (o *Company) BankAccounts(mods ...qm.QueryMod) bankAccountQuery {
-	var queryMods []qm.QueryMod
-	if len(mods) != 0 {
-		queryMods = append(queryMods, mods...)
-	}
-
-	queryMods = append(queryMods,
-		qm.Where("`bank_account`.`company_id`=?", o.ID),
-	)
-
-	return BankAccounts(queryMods...)
-}
-
-// ClientCompanyCompanyClients retrieves all the company_client's CompanyClients with an executor via client_company_id column.
-func (o *Company) ClientCompanyCompanyClients(mods ...qm.QueryMod) companyClientQuery {
-	var queryMods []qm.QueryMod
-	if len(mods) != 0 {
-		queryMods = append(queryMods, mods...)
-	}
-
-	queryMods = append(queryMods,
-		qm.Where("`company_client`.`client_company_id`=?", o.ID),
-	)
-
-	return CompanyClients(queryMods...)
-}
-
 // CompanyClients retrieves all the company_client's CompanyClients with an executor.
 func (o *Company) CompanyClients(mods ...qm.QueryMod) companyClientQuery {
 	var queryMods []qm.QueryMod
@@ -478,232 +448,18 @@ func (o *Company) CompanyClients(mods ...qm.QueryMod) companyClientQuery {
 	return CompanyClients(queryMods...)
 }
 
-// LoadBankAccounts allows an eager lookup of values, cached into the
-// loaded structs of the objects. This is for a 1-M or N-M relationship.
-func (companyL) LoadBankAccounts(ctx context.Context, e boil.ContextExecutor, singular bool, maybeCompany interface{}, mods queries.Applicator) error {
-	var slice []*Company
-	var object *Company
-
-	if singular {
-		var ok bool
-		object, ok = maybeCompany.(*Company)
-		if !ok {
-			object = new(Company)
-			ok = queries.SetFromEmbeddedStruct(&object, &maybeCompany)
-			if !ok {
-				return errors.New(fmt.Sprintf("failed to set %T from embedded struct %T", object, maybeCompany))
-			}
-		}
-	} else {
-		s, ok := maybeCompany.(*[]*Company)
-		if ok {
-			slice = *s
-		} else {
-			ok = queries.SetFromEmbeddedStruct(&slice, maybeCompany)
-			if !ok {
-				return errors.New(fmt.Sprintf("failed to set %T from embedded struct %T", slice, maybeCompany))
-			}
-		}
+// Invoices retrieves all the invoice's Invoices with an executor.
+func (o *Company) Invoices(mods ...qm.QueryMod) invoiceQuery {
+	var queryMods []qm.QueryMod
+	if len(mods) != 0 {
+		queryMods = append(queryMods, mods...)
 	}
 
-	args := make([]interface{}, 0, 1)
-	if singular {
-		if object.R == nil {
-			object.R = &companyR{}
-		}
-		args = append(args, object.ID)
-	} else {
-	Outer:
-		for _, obj := range slice {
-			if obj.R == nil {
-				obj.R = &companyR{}
-			}
-
-			for _, a := range args {
-				if a == obj.ID {
-					continue Outer
-				}
-			}
-
-			args = append(args, obj.ID)
-		}
-	}
-
-	if len(args) == 0 {
-		return nil
-	}
-
-	query := NewQuery(
-		qm.From(`bank_account`),
-		qm.WhereIn(`bank_account.company_id in ?`, args...),
+	queryMods = append(queryMods,
+		qm.Where("`invoice`.`company_id`=?", o.ID),
 	)
-	if mods != nil {
-		mods.Apply(query)
-	}
 
-	results, err := query.QueryContext(ctx, e)
-	if err != nil {
-		return errors.Wrap(err, "failed to eager load bank_account")
-	}
-
-	var resultSlice []*BankAccount
-	if err = queries.Bind(results, &resultSlice); err != nil {
-		return errors.Wrap(err, "failed to bind eager loaded slice bank_account")
-	}
-
-	if err = results.Close(); err != nil {
-		return errors.Wrap(err, "failed to close results in eager load on bank_account")
-	}
-	if err = results.Err(); err != nil {
-		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for bank_account")
-	}
-
-	if len(bankAccountAfterSelectHooks) != 0 {
-		for _, obj := range resultSlice {
-			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
-				return err
-			}
-		}
-	}
-	if singular {
-		object.R.BankAccounts = resultSlice
-		for _, foreign := range resultSlice {
-			if foreign.R == nil {
-				foreign.R = &bankAccountR{}
-			}
-			foreign.R.Company = object
-		}
-		return nil
-	}
-
-	for _, foreign := range resultSlice {
-		for _, local := range slice {
-			if local.ID == foreign.CompanyID {
-				local.R.BankAccounts = append(local.R.BankAccounts, foreign)
-				if foreign.R == nil {
-					foreign.R = &bankAccountR{}
-				}
-				foreign.R.Company = local
-				break
-			}
-		}
-	}
-
-	return nil
-}
-
-// LoadClientCompanyCompanyClients allows an eager lookup of values, cached into the
-// loaded structs of the objects. This is for a 1-M or N-M relationship.
-func (companyL) LoadClientCompanyCompanyClients(ctx context.Context, e boil.ContextExecutor, singular bool, maybeCompany interface{}, mods queries.Applicator) error {
-	var slice []*Company
-	var object *Company
-
-	if singular {
-		var ok bool
-		object, ok = maybeCompany.(*Company)
-		if !ok {
-			object = new(Company)
-			ok = queries.SetFromEmbeddedStruct(&object, &maybeCompany)
-			if !ok {
-				return errors.New(fmt.Sprintf("failed to set %T from embedded struct %T", object, maybeCompany))
-			}
-		}
-	} else {
-		s, ok := maybeCompany.(*[]*Company)
-		if ok {
-			slice = *s
-		} else {
-			ok = queries.SetFromEmbeddedStruct(&slice, maybeCompany)
-			if !ok {
-				return errors.New(fmt.Sprintf("failed to set %T from embedded struct %T", slice, maybeCompany))
-			}
-		}
-	}
-
-	args := make([]interface{}, 0, 1)
-	if singular {
-		if object.R == nil {
-			object.R = &companyR{}
-		}
-		args = append(args, object.ID)
-	} else {
-	Outer:
-		for _, obj := range slice {
-			if obj.R == nil {
-				obj.R = &companyR{}
-			}
-
-			for _, a := range args {
-				if a == obj.ID {
-					continue Outer
-				}
-			}
-
-			args = append(args, obj.ID)
-		}
-	}
-
-	if len(args) == 0 {
-		return nil
-	}
-
-	query := NewQuery(
-		qm.From(`company_client`),
-		qm.WhereIn(`company_client.client_company_id in ?`, args...),
-	)
-	if mods != nil {
-		mods.Apply(query)
-	}
-
-	results, err := query.QueryContext(ctx, e)
-	if err != nil {
-		return errors.Wrap(err, "failed to eager load company_client")
-	}
-
-	var resultSlice []*CompanyClient
-	if err = queries.Bind(results, &resultSlice); err != nil {
-		return errors.Wrap(err, "failed to bind eager loaded slice company_client")
-	}
-
-	if err = results.Close(); err != nil {
-		return errors.Wrap(err, "failed to close results in eager load on company_client")
-	}
-	if err = results.Err(); err != nil {
-		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for company_client")
-	}
-
-	if len(companyClientAfterSelectHooks) != 0 {
-		for _, obj := range resultSlice {
-			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
-				return err
-			}
-		}
-	}
-	if singular {
-		object.R.ClientCompanyCompanyClients = resultSlice
-		for _, foreign := range resultSlice {
-			if foreign.R == nil {
-				foreign.R = &companyClientR{}
-			}
-			foreign.R.ClientCompany = object
-		}
-		return nil
-	}
-
-	for _, foreign := range resultSlice {
-		for _, local := range slice {
-			if local.ID == foreign.ClientCompanyID {
-				local.R.ClientCompanyCompanyClients = append(local.R.ClientCompanyCompanyClients, foreign)
-				if foreign.R == nil {
-					foreign.R = &companyClientR{}
-				}
-				foreign.R.ClientCompany = local
-				break
-			}
-		}
-	}
-
-	return nil
+	return Invoices(queryMods...)
 }
 
 // LoadCompanyClients allows an eager lookup of values, cached into the
@@ -820,109 +576,117 @@ func (companyL) LoadCompanyClients(ctx context.Context, e boil.ContextExecutor, 
 	return nil
 }
 
-// AddBankAccounts adds the given related objects to the existing relationships
-// of the company, optionally inserting them as new records.
-// Appends related to o.R.BankAccounts.
-// Sets related.R.Company appropriately.
-func (o *Company) AddBankAccounts(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*BankAccount) error {
-	var err error
-	for _, rel := range related {
-		if insert {
-			rel.CompanyID = o.ID
-			if err = rel.Insert(ctx, exec, boil.Infer()); err != nil {
-				return errors.Wrap(err, "failed to insert into foreign table")
-			}
-		} else {
-			updateQuery := fmt.Sprintf(
-				"UPDATE `bank_account` SET %s WHERE %s",
-				strmangle.SetParamNames("`", "`", 0, []string{"company_id"}),
-				strmangle.WhereClause("`", "`", 0, bankAccountPrimaryKeyColumns),
-			)
-			values := []interface{}{o.ID, rel.ID}
+// LoadInvoices allows an eager lookup of values, cached into the
+// loaded structs of the objects. This is for a 1-M or N-M relationship.
+func (companyL) LoadInvoices(ctx context.Context, e boil.ContextExecutor, singular bool, maybeCompany interface{}, mods queries.Applicator) error {
+	var slice []*Company
+	var object *Company
 
-			if boil.IsDebug(ctx) {
-				writer := boil.DebugWriterFrom(ctx)
-				fmt.Fprintln(writer, updateQuery)
-				fmt.Fprintln(writer, values)
+	if singular {
+		var ok bool
+		object, ok = maybeCompany.(*Company)
+		if !ok {
+			object = new(Company)
+			ok = queries.SetFromEmbeddedStruct(&object, &maybeCompany)
+			if !ok {
+				return errors.New(fmt.Sprintf("failed to set %T from embedded struct %T", object, maybeCompany))
 			}
-			if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
-				return errors.Wrap(err, "failed to update foreign table")
-			}
-
-			rel.CompanyID = o.ID
-		}
-	}
-
-	if o.R == nil {
-		o.R = &companyR{
-			BankAccounts: related,
 		}
 	} else {
-		o.R.BankAccounts = append(o.R.BankAccounts, related...)
-	}
-
-	for _, rel := range related {
-		if rel.R == nil {
-			rel.R = &bankAccountR{
-				Company: o,
-			}
+		s, ok := maybeCompany.(*[]*Company)
+		if ok {
+			slice = *s
 		} else {
-			rel.R.Company = o
-		}
-	}
-	return nil
-}
-
-// AddClientCompanyCompanyClients adds the given related objects to the existing relationships
-// of the company, optionally inserting them as new records.
-// Appends related to o.R.ClientCompanyCompanyClients.
-// Sets related.R.ClientCompany appropriately.
-func (o *Company) AddClientCompanyCompanyClients(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*CompanyClient) error {
-	var err error
-	for _, rel := range related {
-		if insert {
-			rel.ClientCompanyID = o.ID
-			if err = rel.Insert(ctx, exec, boil.Infer()); err != nil {
-				return errors.Wrap(err, "failed to insert into foreign table")
+			ok = queries.SetFromEmbeddedStruct(&slice, maybeCompany)
+			if !ok {
+				return errors.New(fmt.Sprintf("failed to set %T from embedded struct %T", slice, maybeCompany))
 			}
-		} else {
-			updateQuery := fmt.Sprintf(
-				"UPDATE `company_client` SET %s WHERE %s",
-				strmangle.SetParamNames("`", "`", 0, []string{"client_company_id"}),
-				strmangle.WhereClause("`", "`", 0, companyClientPrimaryKeyColumns),
-			)
-			values := []interface{}{o.ID, rel.ID}
-
-			if boil.IsDebug(ctx) {
-				writer := boil.DebugWriterFrom(ctx)
-				fmt.Fprintln(writer, updateQuery)
-				fmt.Fprintln(writer, values)
-			}
-			if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
-				return errors.Wrap(err, "failed to update foreign table")
-			}
-
-			rel.ClientCompanyID = o.ID
 		}
 	}
 
-	if o.R == nil {
-		o.R = &companyR{
-			ClientCompanyCompanyClients: related,
+	args := make([]interface{}, 0, 1)
+	if singular {
+		if object.R == nil {
+			object.R = &companyR{}
 		}
+		args = append(args, object.ID)
 	} else {
-		o.R.ClientCompanyCompanyClients = append(o.R.ClientCompanyCompanyClients, related...)
-	}
-
-	for _, rel := range related {
-		if rel.R == nil {
-			rel.R = &companyClientR{
-				ClientCompany: o,
+	Outer:
+		for _, obj := range slice {
+			if obj.R == nil {
+				obj.R = &companyR{}
 			}
-		} else {
-			rel.R.ClientCompany = o
+
+			for _, a := range args {
+				if a == obj.ID {
+					continue Outer
+				}
+			}
+
+			args = append(args, obj.ID)
 		}
 	}
+
+	if len(args) == 0 {
+		return nil
+	}
+
+	query := NewQuery(
+		qm.From(`invoice`),
+		qm.WhereIn(`invoice.company_id in ?`, args...),
+	)
+	if mods != nil {
+		mods.Apply(query)
+	}
+
+	results, err := query.QueryContext(ctx, e)
+	if err != nil {
+		return errors.Wrap(err, "failed to eager load invoice")
+	}
+
+	var resultSlice []*Invoice
+	if err = queries.Bind(results, &resultSlice); err != nil {
+		return errors.Wrap(err, "failed to bind eager loaded slice invoice")
+	}
+
+	if err = results.Close(); err != nil {
+		return errors.Wrap(err, "failed to close results in eager load on invoice")
+	}
+	if err = results.Err(); err != nil {
+		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for invoice")
+	}
+
+	if len(invoiceAfterSelectHooks) != 0 {
+		for _, obj := range resultSlice {
+			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
+				return err
+			}
+		}
+	}
+	if singular {
+		object.R.Invoices = resultSlice
+		for _, foreign := range resultSlice {
+			if foreign.R == nil {
+				foreign.R = &invoiceR{}
+			}
+			foreign.R.Company = object
+		}
+		return nil
+	}
+
+	for _, foreign := range resultSlice {
+		for _, local := range slice {
+			if local.ID == foreign.CompanyID {
+				local.R.Invoices = append(local.R.Invoices, foreign)
+				if foreign.R == nil {
+					foreign.R = &invoiceR{}
+				}
+				foreign.R.Company = local
+				break
+			}
+		}
+	}
+
 	return nil
 }
 
@@ -970,6 +734,59 @@ func (o *Company) AddCompanyClients(ctx context.Context, exec boil.ContextExecut
 	for _, rel := range related {
 		if rel.R == nil {
 			rel.R = &companyClientR{
+				Company: o,
+			}
+		} else {
+			rel.R.Company = o
+		}
+	}
+	return nil
+}
+
+// AddInvoices adds the given related objects to the existing relationships
+// of the company, optionally inserting them as new records.
+// Appends related to o.R.Invoices.
+// Sets related.R.Company appropriately.
+func (o *Company) AddInvoices(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*Invoice) error {
+	var err error
+	for _, rel := range related {
+		if insert {
+			rel.CompanyID = o.ID
+			if err = rel.Insert(ctx, exec, boil.Infer()); err != nil {
+				return errors.Wrap(err, "failed to insert into foreign table")
+			}
+		} else {
+			updateQuery := fmt.Sprintf(
+				"UPDATE `invoice` SET %s WHERE %s",
+				strmangle.SetParamNames("`", "`", 0, []string{"company_id"}),
+				strmangle.WhereClause("`", "`", 0, invoicePrimaryKeyColumns),
+			)
+			values := []interface{}{o.ID, rel.ID}
+
+			if boil.IsDebug(ctx) {
+				writer := boil.DebugWriterFrom(ctx)
+				fmt.Fprintln(writer, updateQuery)
+				fmt.Fprintln(writer, values)
+			}
+			if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
+				return errors.Wrap(err, "failed to update foreign table")
+			}
+
+			rel.CompanyID = o.ID
+		}
+	}
+
+	if o.R == nil {
+		o.R = &companyR{
+			Invoices: related,
+		}
+	} else {
+		o.R.Invoices = append(o.R.Invoices, related...)
+	}
+
+	for _, rel := range related {
+		if rel.R == nil {
+			rel.R = &invoiceR{
 				Company: o,
 			}
 		} else {

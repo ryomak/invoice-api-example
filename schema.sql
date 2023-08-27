@@ -2,6 +2,7 @@ CREATE TABLE `company` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT COMMENT '会社ID',
   `rand_id` varchar(255) NOT NULL COMMENT 'randID',
   `name` varchar(255) NOT NULL COMMENT '会社名',
+  `representative_name` varchar(255) NOT NULL COMMENT '代表者名',
   `phone_number` varchar(255) NOT NULL COMMENT '電話番号',
   `postal_code` varchar(255) NOT NULL COMMENT '郵便番号',
   `address` varchar(255) NOT NULL COMMENT '住所',
@@ -11,42 +12,10 @@ CREATE TABLE `company` (
   UNIQUE KEY `rand_id` (`rand_id`)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE `company_client` (
-   `id` bigint unsigned NOT NULL AUTO_INCREMENT COMMENT '取引先ID',
-   `company_id` bigint unsigned NOT NULL COMMENT '会社ID',
-   `client_company_id` bigint unsigned NOT NULL COMMENT '取引先会社ID',
-   `created_at` datetime NOT NULL,
-   `updated_at` datetime NOT NULL,
-   PRIMARY KEY (`id`),
-   UNIQUE KEY `company_cliet_uniq` (`company_id`,`client_company_id`),
-   CONSTRAINT `fk_company_client_company_id`
-      FOREIGN KEY (`company_id`)
-          REFERENCES `company` (`id`)
-          ON DELETE RESTRICT ON UPDATE RESTRICT,
-   CONSTRAINT `fk_company_client_client_company_id`
-      FOREIGN KEY (`client_company_id`)
-          REFERENCES `company` (`id`)
-          ON DELETE RESTRICT ON UPDATE RESTRICT
-)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
-CREATE TABLE `user` (
-   `id` bigint unsigned NOT NULL AUTO_INCREMENT COMMENT 'ユーザID',
-   `company_id` bigint unsigned NOT NULL COMMENT '会社ID',
-   `rand_id` varchar(255) NOT NULL COMMENT 'randID',
-   `name` varchar(255) NOT NULL COMMENT '名前',
-   `mail` varchar(255) NOT NULL COMMENT 'メールアドレス',
-   `password_hash` varchar(255) NOT NULL COMMENT 'パスワード',
-   `password_salt` varchar(255) NOT NULL COMMENT 'パスワード用のソルト',
-   `created_at` datetime NOT NULL,
-   `updated_at` datetime NOT NULL,
-   PRIMARY KEY (`id`),
-   UNIQUE KEY `rand_id` (`rand_id`)
-)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
 CREATE TABLE `bank` (
    `id` bigint unsigned NOT NULL AUTO_INCREMENT COMMENT '銀行口座ID',
    `rand_id` varchar(255) NOT NULL COMMENT 'randID',
-   `bank_name` varchar(255) NOT NULL COMMENT '銀行名',
+   `name` varchar(255) NOT NULL COMMENT '銀行名',
    PRIMARY KEY (`id`),
    UNIQUE KEY `rand_id` (`rand_id`)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -64,17 +33,13 @@ CREATE TABLE `bank_branch` (
 
 CREATE TABLE `bank_account` (
    `id` bigint unsigned NOT NULL COMMENT 'id',
-   `company_id` bigint unsigned NOT NULL COMMENT '会社ID',
    `bank_id` bigint unsigned NOT NULL COMMENT '銀行ID',
    `branch_id` bigint unsigned NOT NULL COMMENT '支店ID',
-   `holder_name` varchar(255) NOT NULL COMMENT '名義',
+   `holder_name` varchar(255) NOT NULL COMMENT '口座名',
+   `number` varchar(255) NOT NULL COMMENT '口座番号',
    `created_at` datetime NOT NULL,
    `updated_at` datetime NOT NULL,
    PRIMARY KEY (`id`),
-   CONSTRAINT `fk_bank_account_company_id`
-       FOREIGN KEY (`company_id`)
-           REFERENCES `company` (`id`)
-           ON DELETE RESTRICT ON UPDATE RESTRICT,
    CONSTRAINT `fk_bank_account_bank_id`
       FOREIGN KEY (`bank_id`)
           REFERENCES `bank` (`id`)
@@ -85,11 +50,49 @@ CREATE TABLE `bank_account` (
           ON DELETE RESTRICT ON UPDATE RESTRICT
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+CREATE TABLE `company_client` (
+   `id` bigint unsigned NOT NULL AUTO_INCREMENT COMMENT '取引先ID',
+   `rand_id` varchar(255) NOT NULL COMMENT 'randID',
+   `company_id` bigint unsigned NOT NULL COMMENT '取引先ID',
+   `name` varchar(255) NOT NULL COMMENT '取引先名',
+   `bank_account_id` bigint unsigned NOT NULL COMMENT '銀行口座ID',
+   `representative_name` varchar(255) NOT NULL COMMENT '代表者名',
+   `phone_number` varchar(255) NOT NULL COMMENT '電話番号',
+   `postal_code` varchar(255) NOT NULL COMMENT '郵便番号',
+   `address` varchar(255) NOT NULL COMMENT '住所',
+   `created_at` datetime NOT NULL,
+   `updated_at` datetime NOT NULL,
+   PRIMARY KEY (`id`),
+   CONSTRAINT `fk_company_client_company_id`
+      FOREIGN KEY (`company_id`)
+          REFERENCES `company` (`id`)
+          ON DELETE RESTRICT ON UPDATE RESTRICT,
+   CONSTRAINT `fk_company_client_bank_account_id`
+      FOREIGN KEY (`bank_account_id`)
+          REFERENCES `bank_account` (`id`)
+          ON DELETE RESTRICT ON UPDATE RESTRICT
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE `user` (
+   `id` bigint unsigned NOT NULL AUTO_INCREMENT COMMENT 'ユーザID',
+   `company_id` bigint unsigned NOT NULL COMMENT '会社ID',
+   `rand_id` varchar(255) NOT NULL COMMENT 'randID',
+   `name` varchar(255) NOT NULL COMMENT '名前',
+   `mail` varchar(255) NOT NULL COMMENT 'メールアドレス',
+   `password_hash` varchar(255) NOT NULL COMMENT 'パスワード',
+   `password_salt` varchar(255) NOT NULL COMMENT 'パスワード用のソルト',
+   `created_at` datetime NOT NULL,
+   `updated_at` datetime NOT NULL,
+   PRIMARY KEY (`id`),
+   UNIQUE KEY `rand_id` (`rand_id`)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 CREATE TABLE `invoice` (
    `id` bigint unsigned NOT NULL AUTO_INCREMENT COMMENT '銀行口座ID',
    `rand_id` varchar(255) NOT NULL COMMENT 'randID',
+   `company_id` bigint unsigned NOT NULL COMMENT '企業ID',
    `company_client_id` bigint unsigned NOT NULL COMMENT '取引先ID',
-   `status` enum('init','processing','completed','error') NOT NULL COMMENT 'init=未処理,processing=処理中,completed=支払い済み,error=エラー',
+   `status` enum('unpaid','processing','paid','error') NOT NULL COMMENT 'init=未処理,processing=処理中,completed=支払い済み,error=エラー',
    `issue_at` datetime NOT NULL COMMENT '発行日',
    `amount` bigint unsigned NOT NULL COMMENT '金額',
    `fee` int unsigned NOT NULL COMMENT '手数料',
@@ -101,6 +104,10 @@ CREATE TABLE `invoice` (
    `updated_at` datetime NOT NULL,
    PRIMARY KEY (`id`),
    UNIQUE KEY `rand_id` (`rand_id`),
+   CONSTRAINT `fk_invoice_company_id`
+       FOREIGN KEY (`company_id`)
+           REFERENCES `company` (`id`)
+           ON DELETE RESTRICT ON UPDATE RESTRICT,
    CONSTRAINT `fk_invoice_company_client_id`
       FOREIGN KEY (`company_client_id`)
           REFERENCES `company_client` (`id`)

@@ -17,8 +17,10 @@ import (
 // Injectors from wire.go:
 
 func Handlers(conn *db.Conn) (*handler.Handler, error) {
-	invoice := usecase.NewInvoice()
-	invoiceHandler := handler.NewInvoiceHandler(invoice)
+	company := repository.NewCompany(conn)
+	invoice := repository.NewInvoice(conn)
+	usecaseInvoice := usecase.NewInvoice(company, invoice)
+	invoiceHandler := handler.NewInvoiceHandler(usecaseInvoice)
 	handlerHandler := handler.New(invoiceHandler)
 	return handlerHandler, nil
 }

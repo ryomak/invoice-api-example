@@ -27,30 +27,30 @@ type Bank struct { // 銀行口座ID
 	// randID
 	RandID string `boil:"rand_id" json:"rand_id" toml:"rand_id" yaml:"rand_id"`
 	// 銀行名
-	BankName string `boil:"bank_name" json:"bank_name" toml:"bank_name" yaml:"bank_name"`
+	Name string `boil:"name" json:"name" toml:"name" yaml:"name"`
 
 	R *bankR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L bankL  `boil:"-" json:"-" toml:"-" yaml:"-"`
 }
 
 var BankColumns = struct {
-	ID       string
-	RandID   string
-	BankName string
+	ID     string
+	RandID string
+	Name   string
 }{
-	ID:       "id",
-	RandID:   "rand_id",
-	BankName: "bank_name",
+	ID:     "id",
+	RandID: "rand_id",
+	Name:   "name",
 }
 
 var BankTableColumns = struct {
-	ID       string
-	RandID   string
-	BankName string
+	ID     string
+	RandID string
+	Name   string
 }{
-	ID:       "bank.id",
-	RandID:   "bank.rand_id",
-	BankName: "bank.bank_name",
+	ID:     "bank.id",
+	RandID: "bank.rand_id",
+	Name:   "bank.name",
 }
 
 // Generated where
@@ -102,13 +102,13 @@ func (w whereHelperstring) NIN(slice []string) qm.QueryMod {
 }
 
 var BankWhere = struct {
-	ID       whereHelperuint64
-	RandID   whereHelperstring
-	BankName whereHelperstring
+	ID     whereHelperuint64
+	RandID whereHelperstring
+	Name   whereHelperstring
 }{
-	ID:       whereHelperuint64{field: "`bank`.`id`"},
-	RandID:   whereHelperstring{field: "`bank`.`rand_id`"},
-	BankName: whereHelperstring{field: "`bank`.`bank_name`"},
+	ID:     whereHelperuint64{field: "`bank`.`id`"},
+	RandID: whereHelperstring{field: "`bank`.`rand_id`"},
+	Name:   whereHelperstring{field: "`bank`.`name`"},
 }
 
 // BankRels is where relationship names are stored.
@@ -149,8 +149,8 @@ func (r *bankR) GetBankBranches() BankBranchSlice {
 type bankL struct{}
 
 var (
-	bankAllColumns            = []string{"id", "rand_id", "bank_name"}
-	bankColumnsWithoutDefault = []string{"rand_id", "bank_name"}
+	bankAllColumns            = []string{"id", "rand_id", "name"}
+	bankColumnsWithoutDefault = []string{"rand_id", "name"}
 	bankColumnsWithDefault    = []string{"id"}
 	bankPrimaryKeyColumns     = []string{"id"}
 	bankGeneratedColumns      = []string{}

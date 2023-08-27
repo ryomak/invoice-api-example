@@ -3,10 +3,10 @@ package entity
 type User struct {
 	ID        uint64
 	RandID    string
-	Name      string
-	CompanyID uint64
-	Mail      string
+	Name      string // 氏名
+	CompanyID uint64 // 会社ID
+	Mail      string // メールアドレス
 
-	PasswordHash string
-	PasswordSalt string
+	PasswordHash string // パスワードハッシュ
+	PasswordSalt string // パスワードソルト
 }

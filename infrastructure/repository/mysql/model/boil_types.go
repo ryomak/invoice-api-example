@@ -53,17 +53,17 @@ func makeCacheKey(cols boil.Columns, nzDefaults []string) string {
 
 // Enum values for InvoiceStatus
 const (
-	InvoiceStatusInit       string = "init"
+	InvoiceStatusUnpaid     string = "unpaid"
 	InvoiceStatusProcessing string = "processing"
-	InvoiceStatusCompleted  string = "completed"
+	InvoiceStatusPaid       string = "paid"
 	InvoiceStatusError      string = "error"
 )
 
 func AllInvoiceStatus() []string {
 	return []string{
-		InvoiceStatusInit,
+		InvoiceStatusUnpaid,
 		InvoiceStatusProcessing,
-		InvoiceStatusCompleted,
+		InvoiceStatusPaid,
 		InvoiceStatusError,
 	}
 }

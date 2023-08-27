@@ -19,6 +19,8 @@ func Handlers(
 		handler.New,
 		handler.NewInvoiceHandler,
 		usecase.NewInvoice,
+		repository.NewCompany,
+		repository.NewInvoice,
 	)
 
 	return nil, nil
